@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { evaluate } from 'mathjs';
 
 export default function Calculator() {
   const [display, setDisplay] = useState('0');
