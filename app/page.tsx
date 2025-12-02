@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
+import copy from 'clipboard-copy';
 
 interface CalculationHistory {
   expression: string;
@@ -18,6 +19,7 @@ export default function Calculator() {
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<CalculationHistory[]>([]);
   const [currentExpression, setCurrentExpression] = useState('');
+  const [copySuccess, setCopySuccess] = useState(false);
 
   // Load history from localStorage on mount
   useEffect(() => {
@@ -192,6 +194,16 @@ export default function Calculator() {
     }
   };
 
+  const copyToClipboard = async () => {
+    try {
+      await copy(display);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy:', error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="w-full max-w-4xl rounded-2xl bg-white p-6 shadow-2xl">
@@ -217,9 +229,18 @@ export default function Calculator() {
           {/* Calculator */}
           <div>
             {/* Display */}
-            <div className="mb-4 rounded-lg bg-gray-900 p-6 text-right">
-              <div className="text-4xl font-mono font-semibold text-white overflow-x-auto">
-                {display}
+            <div className="mb-4 rounded-lg bg-gray-900 p-6">
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={copyToClipboard}
+                  className="rounded-lg bg-teal-500 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-600 active:bg-teal-700"
+                  title="Copy result to clipboard"
+                >
+                  {copySuccess ? '✓ Copied!' : '📋 Copy'}
+                </button>
+                <div className="text-4xl font-mono font-semibold text-white overflow-x-auto text-right flex-1 ml-4">
+                  {display}
+                </div>
               </div>
             </div>
 
