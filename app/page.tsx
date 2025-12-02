@@ -80,7 +80,7 @@ export default function Calculator() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-        <h1 className="mb-6 text-center text-3xl font-bold text-gray-800">Calculator</h1>
+        <h1 className="mb-6 text-center text-3xl font-bold text-blue-600">Calculator - Hot Reload Test</h1>
         
         {/* Display */}
         <div className="mb-4 rounded-lg bg-gray-900 p-6 text-right">
