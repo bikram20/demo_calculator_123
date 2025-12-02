@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { evaluate } from 'mathjs';
 
 export default function Calculator() {
   const [display, setDisplay] = useState('0');
   const [previousValue, setPreviousValue] = useState<number | null>(null);
   const [operation, setOperation] = useState<string | null>(null);
   const [waitingForNewValue, setWaitingForNewValue] = useState(false);
+  const [scientificMode, setScientificMode] = useState(false);
 
   const inputNumber = (num: string) => {
     if (waitingForNewValue) {
@@ -60,6 +62,8 @@ export default function Calculator() {
         return firstValue * secondValue;
       case '÷':
         return secondValue !== 0 ? firstValue / secondValue : 0;
+      case '^':
+        return Math.pow(firstValue, secondValue);
       default:
         return secondValue;
     }
@@ -77,10 +81,54 @@ export default function Calculator() {
     }
   };
 
+  const performScientificFunction = (func: string) => {
+    try {
+      const value = parseFloat(display);
+      let result: number;
+
+      switch (func) {
+        case 'sin':
+          result = Math.sin(value);
+          break;
+        case 'cos':
+          result = Math.cos(value);
+          break;
+        case 'tan':
+          result = Math.tan(value);
+          break;
+        case 'log':
+          result = Math.log10(value);
+          break;
+        case 'ln':
+          result = Math.log(value);
+          break;
+        case 'sqrt':
+          result = Math.sqrt(value);
+          break;
+        default:
+          result = value;
+      }
+
+      setDisplay(String(result));
+      setWaitingForNewValue(true);
+    } catch (error) {
+      setDisplay('Error');
+      setWaitingForNewValue(true);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-        <h1 className="mb-6 text-center text-3xl font-bold text-blue-600">Calculator - Hot Reload Test</h1>
+        <div className="mb-4 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-blue-600">Scientific Calculator</h1>
+          <button
+            onClick={() => setScientificMode(!scientificMode)}
+            className="rounded-lg bg-purple-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-purple-600"
+          >
+            {scientificMode ? 'Basic' : 'Scientific'}
+          </button>
+        </div>
         
         {/* Display */}
         <div className="mb-4 rounded-lg bg-gray-900 p-6 text-right">
@@ -88,6 +136,48 @@ export default function Calculator() {
             {display}
           </div>
         </div>
+
+        {/* Scientific Functions Row (only when in scientific mode) */}
+        {scientificMode && (
+          <div className="mb-3 grid grid-cols-6 gap-2">
+            <button
+              onClick={() => performScientificFunction('sin')}
+              className="rounded-lg bg-indigo-500 px-2 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 active:bg-indigo-700"
+            >
+              sin
+            </button>
+            <button
+              onClick={() => performScientificFunction('cos')}
+              className="rounded-lg bg-indigo-500 px-2 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 active:bg-indigo-700"
+            >
+              cos
+            </button>
+            <button
+              onClick={() => performScientificFunction('tan')}
+              className="rounded-lg bg-indigo-500 px-2 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 active:bg-indigo-700"
+            >
+              tan
+            </button>
+            <button
+              onClick={() => performScientificFunction('log')}
+              className="rounded-lg bg-indigo-500 px-2 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 active:bg-indigo-700"
+            >
+              log
+            </button>
+            <button
+              onClick={() => performScientificFunction('ln')}
+              className="rounded-lg bg-indigo-500 px-2 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 active:bg-indigo-700"
+            >
+              ln
+            </button>
+            <button
+              onClick={() => performScientificFunction('sqrt')}
+              className="rounded-lg bg-indigo-500 px-2 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 active:bg-indigo-700"
+            >
+              √
+            </button>
+          </div>
+        )}
 
         {/* Buttons */}
         <div className="grid grid-cols-4 gap-3">
@@ -202,6 +292,14 @@ export default function Calculator() {
           >
             .
           </button>
+          {scientificMode && (
+            <button
+              onClick={() => performOperation('^')}
+              className="rounded-lg bg-purple-500 px-4 py-4 text-xl font-semibold text-white transition-colors hover:bg-purple-600 active:bg-purple-700"
+            >
+              ^
+            </button>
+          )}
         </div>
       </div>
     </div>
